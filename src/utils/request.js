@@ -1,4 +1,5 @@
 import axios from "axios"
+import { getToken } from "./token"
 
 // 创建axios实例 配置baseURL 请求拦截器 响应拦截器
 const request = axios.create({
@@ -9,6 +10,11 @@ const request = axios.create({
 // 添加请求拦截器
 request.interceptors.request.use(
   (config) => {
+    // 获取token
+    const token = getToken()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
   (error) => {
