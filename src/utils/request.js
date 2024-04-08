@@ -1,5 +1,6 @@
 import axios from "axios"
-import { getToken } from "./token"
+import { getToken, removeToken } from "./token"
+import router from "@/router"
 
 // 创建axios实例 配置baseURL 请求拦截器 响应拦截器
 const request = axios.create({
@@ -32,6 +33,15 @@ request.interceptors.response.use(
   (error) => {
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
+    // 监控401
+    if (error.response.status === 401) {
+      // 清除token
+      removeToken()
+      // 跳转到登录页面
+      router.navigate("/login")
+      // 强制刷新
+      window.location.reload()
+    }
     return Promise.reject(error)
   }
 )
